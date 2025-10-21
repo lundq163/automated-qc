@@ -1,0 +1,12 @@
+# environment files
+.env
+.venv/*
+
+# data
+/data/*
+
+# logs
+/scripts/output_logs/*
+
+# models
+/models/*.pt
