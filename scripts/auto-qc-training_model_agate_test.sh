@@ -16,6 +16,9 @@
 #SBATCH -A feczk001
 
 cd /users/1/lundq163/projects/automated-qc/src/training || exit
+
+export PYTHONPATH=/users/1/lundq163/projects/automated-qc/src:$PYTHONPATH
+
 /users/1/lundq163/projects/automated-qc/.venv/bin/python \
 /users/1/lundq163/projects/automated-qc/src/training/training.py \
 --csv-input-file "/users/1/lundq163/projects/automated-qc/data/anat_qc_t1w_t2w_test_subset.csv" \

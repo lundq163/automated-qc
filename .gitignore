@@ -6,7 +6,7 @@
 /data/*
 
 # logs
-/scripts/output_logs/*
+/output*
 
 # models
 /models/*.pt
