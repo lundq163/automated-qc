@@ -32,5 +32,4 @@ export PYTHONPATH=/users/1/lundq163/projects/automated-qc/src:$PYTHONPATH
 --tb-run-dir "/users/1/lundq163/projects/automated-qc/src/training/runs/" \
 --split-strategy "stratified" \
 --train-split 0.8 \
---model "Regressor" \
---DEBUG
+--model "Regressor"
