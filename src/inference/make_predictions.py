@@ -191,6 +191,8 @@ def get_validation_info(
     output_df = validation_rows.copy()
     subjects = list(output_df["subject_id"])
     sessions = list(output_df["session_id"])
+    runs = list(output_df["run_id"])
+    suffixes = list(output_df["suffix"])
     actual_scores = list(output_df["QU_motion"])
     with torch.no_grad():
         inputs = list(output_df.apply(predict, axis=1, args=(data_folder,)))
@@ -198,7 +200,7 @@ def get_validation_info(
         predictions = [model(input) for input in inputs]
         predict_vals = [p[0].item() for p in predictions]
 
-        return subjects, sessions, actual_scores, predict_vals
+        return subjects, sessions, runs, suffixes, actual_scores, predict_vals
 
 
 def compute_standardized_rmse(actual_scores, predict_vals):
