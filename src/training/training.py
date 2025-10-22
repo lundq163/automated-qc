@@ -543,7 +543,7 @@ class AutoQcTrainingApp:
             log.info(f"Current learning rate: {current_lr}")
 
         input_csv_location = self.config.csv_input_file
-        subjects, sessions, actual_scores, predict_vals = get_validation_info(
+        subjects, sessions, runs, suffixes, actual_scores, predict_vals = get_validation_info(
             self.config.model,
             self.config.model_save_location,
             input_csv_location,
@@ -553,7 +553,7 @@ class AutoQcTrainingApp:
 
         output_csv_location = self.config.csv_output_file
         output_df = add_predicted_values(
-            subjects, sessions, predict_vals, input_csv_location
+            subjects, sessions, runs, suffixes, predict_vals, input_csv_location
         )
         output_csv_folder_name = get_folder_name(output_csv_location)
         if not os.path.exists(output_csv_folder_name):

@@ -13,7 +13,7 @@
 #SBATCH --mail-user=lundq163@umn.edu
 #SBATCH -e logs/automated-qc-Regressor-%j.err
 #SBATCH -o logs/automated-qc-Regressor-%j.out
-#SBATCH -A feczk001
+#SBATCH -A csandova
 
 cd /users/1/lundq163/projects/automated-qc/src/training || exit
 
@@ -21,13 +21,13 @@ export PYTHONPATH=/users/1/lundq163/projects/automated-qc/src:$PYTHONPATH
 
 /users/1/lundq163/projects/automated-qc/.venv/bin/python \
 /users/1/lundq163/projects/automated-qc/src/training/training.py \
---csv-input-file "/users/1/lundq163/projects/automated-qc/data/anat_qc_t1w_t2w_test_subset.csv" \
 --batch-size 1 \
 --num-workers 1 \
 --epochs 1 \
 --model-save-location "/users/1/lundq163/projects/automated-qc/models/model_test.pt" \
 --plot-location "/users/1/lundq163/projects/automated-qc/doc/models/model_test/model_test.png" \
 --folder "/scratch.global/lundq163/auto_qc_test/" \
+--csv-input-file "/users/1/lundq163/projects/automated-qc/data/anat_qc_t1w_t2w_test_subset.csv" \
 --csv-output-file "/users/1/lundq163/projects/automated-qc/doc/models/model_test/model_test.csv" \
 --tb-run-dir "/users/1/lundq163/projects/automated-qc/src/training/runs/" \
 --split-strategy "stratified" \
