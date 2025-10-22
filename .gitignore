@@ -4,9 +4,16 @@
 
 # data
 /data/*
+data-unversioned
 
 # logs
-/output*
+/logs/*
+runs
 
 # models
 /models/*.pt
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class

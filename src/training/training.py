@@ -295,11 +295,22 @@ class TrainingLoop:
         label_g = label_t.to(self.device, non_blocking=True)
 
         if self.config.DEBUG:
+            logging.getLogger().setLevel(logging.DEBUG)
+            log.setLevel(logging.DEBUG)
+            logging.getLogger("data_sets").setLevel(logging.DEBUG)
+            logging.getLogger("data_sets.dsets").setLevel(logging.DEBUG)
+            log.debug(f"Input shape: {input_g.shape}")
+            log.debug(f"Label shape: {label_g.shape}")
             log.debug(f"Input device: {input_g.device}")
             log.debug(
                 f"Model device: {next(self.model_handler.model.parameters()).device}"
             )
             log.debug(f"Expected device: {self.device}")
+        else:
+            logging.getLogger().setLevel(logging.INFO)
+            log.setLevel(logging.INFO)
+            logging.getLogger("data_sets").setLevel(logging.INFO)
+            logging.getLogger("data_sets.dsets").setLevel(logging.INFO)
 
         outputs_g = self.model_handler.model(input_g)
 
@@ -336,7 +347,7 @@ class TrainingLoop:
 # TensorBoard Logger
 class TensorBoardLogger:
     def __init__(self, tb_prefix, time_str, comment):
-        self.log_dir = os.path.join("runs", tb_prefix, time_str)
+        self.log_dir = os.path.join(tb_prefix, time_str)
         self.trn_writer = SummaryWriter(log_dir=self.log_dir + f"-trn_cls-{comment}")
         self.val_writer = SummaryWriter(log_dir=self.log_dir + f"-val_cls-{comment}")
 

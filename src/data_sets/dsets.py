@@ -16,9 +16,6 @@ from scipy import ndimage
 from util.disk import getCache
 
 log = logging.getLogger(__name__)
-# log.setLevel(logging.WARN)
-# log.setLevel(logging.INFO)
-log.setLevel(logging.DEBUG)
 
 raw_cache = getCache("auto-qc")
 
@@ -121,6 +118,33 @@ def z_normalize(image, mask=None):
         return image - mean
     return (image - mean) / std
 
+def resize_or_pad(image, target_shape=(256, 320, 320)):
+    """Resize or pad image to target shape"""
+    current_shape = image.shape
+    
+    # calculate padding or cropping needed for each dimension
+    padded_image = np.zeros(target_shape, dtype=image.dtype)
+
+    # calculate slice positions to center the image
+    slices_in = []
+    slices_out = []
+    
+    for i in range(3):
+        if current_shape[i] < target_shape[i]:
+            # need to pad
+            start_idx = (target_shape[i] - current_shape[i]) // 2
+            slices_out.append(slice(start_idx, start_idx + current_shape[i]))
+            slices_in.append(slice(None))
+        else:
+            # need to crop
+            start_idx = (current_shape[i] - target_shape[i]) // 2
+            slices_out.append(slice(start_idx, start_idx + target_shape[i]))
+            slices_in.append(slice(None))
+
+    padded_image[slices_out[0], slices_out[1], slices_out[2]] = image[slices_in[0], slices_in[1], slices_in[2]]
+
+    return padded_image
+
 
 def random_flip_lr(image, prob=0.5):
     """Random left-right flip"""
@@ -161,6 +185,9 @@ class AutoQcMRIs:
 
         # Convert to float32 and ensure it's a numpy array
         image_data = np.array(image_data, dtype=np.float32)
+        
+        # Resize or pad to target shape
+        image_data = resize_or_pad(image_data, target_shape=(260, 320, 320))
 
         # Z-normalization (equivalent to tio.ZNormalization)
         image_data = z_normalize(image_data)
@@ -176,13 +203,13 @@ class AutoQcMRIs:
             # Note: Elastic deformation is more complex without TorchIO
 
         # Convert to torch tensor and add channel dimension
-        self.mprage_image_tensor = torch.from_numpy(image_data.copy()).unsqueeze(
+        self.mri_image_tensor = torch.from_numpy(image_data.copy()).unsqueeze(
             0
         )  # Add channel dim
         self.subject_session_uid = candidate_info
 
     def get_raw_candidate(self):
-        return self.mprage_image_tensor
+        return self.mri_image_tensor
 
 
 @functools.lru_cache(1, typed=True)
@@ -193,9 +220,9 @@ def get_auto_qc_mris(candidate_info, is_val_set_bool):
 @raw_cache.memoize(typed=True)
 def get_mri_raw_candidate(subject_session_uid, is_val_set_bool):
     auto_qc_mris = get_auto_qc_mris(subject_session_uid, is_val_set_bool)
-    mprage_image_tensor = auto_qc_mris.get_raw_candidate()
+    mri_image_tensor = auto_qc_mris.get_raw_candidate()
 
-    return mprage_image_tensor
+    return mri_image_tensor
 
 
 class AutoQcDataset(Dataset):

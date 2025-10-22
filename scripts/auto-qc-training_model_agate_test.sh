@@ -11,8 +11,8 @@
 #SBATCH --mail-type=begin       
 #SBATCH --mail-type=end          
 #SBATCH --mail-user=lundq163@umn.edu
-#SBATCH -e output_logs/automated-qc-Regressor-%j.err
-#SBATCH -o output_logs/automated-qc-Regressor-%j.out
+#SBATCH -e logs/automated-qc-Regressor-%j.err
+#SBATCH -o logs/automated-qc-Regressor-%j.out
 #SBATCH -A feczk001
 
 cd /users/1/lundq163/projects/automated-qc/src/training || exit
@@ -29,4 +29,8 @@ export PYTHONPATH=/users/1/lundq163/projects/automated-qc/src:$PYTHONPATH
 --plot-location "/users/1/lundq163/projects/automated-qc/doc/models/model_test/model_test.png" \
 --folder "/scratch.global/lundq163/auto_qc_test/" \
 --csv-output-file "/users/1/lundq163/projects/automated-qc/doc/models/model_test/model_test.csv" \
---use-train-validation-cols
+--tb-run-dir "/users/1/lundq163/projects/automated-qc/src/training/runs/" \
+--split-strategy "stratified" \
+--train-split 0.8 \
+--model "Regressor" \
+--DEBUG
