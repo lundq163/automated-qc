@@ -1,0 +1,43 @@
+#!/bin/sh
+
+#SBATCH --job-name=automated-qc-Regressor # job name
+
+#SBATCH --mem=240g        
+#SBATCH --time=24:00:00          
+#SBATCH -p a100-4,a100-8
+#SBATCH --gres=gpu:a100:2
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=16    
+
+#SBATCH --mail-type=begin       
+#SBATCH --mail-type=end          
+#SBATCH --mail-user=lundq163@umn.edu
+#SBATCH -e logs/automated-qc-Regressor-%j.err
+#SBATCH -o logs/automated-qc-Regressor-%j.out
+#SBATCH -A feczk001
+
+
+# 24GB+ GPU memory when using batch size 32
+# could also try using --use-weighted-loss flag if needed
+
+cd /users/1/lundq163/projects/automated-qc/src/training || exit
+
+export PYTHONPATH=/users/1/lundq163/projects/automated-qc/src:$PYTHONPATH
+
+/users/1/lundq163/projects/automated-qc/.venv/bin/python \
+/users/1/lundq163/projects/automated-qc/src/training/training.py \
+--model-save-location "/users/1/lundq163/projects/automated-qc/models/model_00.pt" \
+--plot-location "/users/1/lundq163/projects/automated-qc/doc/models/model_00/model_00.png" \
+--folder "/scratch.global/lundq163/auto_qc_all_files/" \
+--csv-input-file "/users/1/lundq163/projects/automated-qc/data/anat_qc_t1w_t2w.csv" \
+--csv-output-file "/users/1/lundq163/projects/automated-qc/doc/models/model_00/model_00.csv" \
+--tb-run-dir "/users/1/lundq163/projects/automated-qc/src/training/runs/" \
+--split-strategy "stratified" \
+--train-split 0.8 \
+--model "Regressor" \
+--lr 0.001 \
+--scheduler "plateau" \
+--batch-size 4 \
+--epochs 50 \
+--optimizer "Adam" \
+--num-workers 12

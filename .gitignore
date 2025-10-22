@@ -12,6 +12,7 @@ runs
 
 # models
 /models/*.pt
+/doc/models/model*/*.csv
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
