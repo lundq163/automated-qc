@@ -34,6 +34,7 @@ import os
 import nibabel as nib
 import argparse
 
+from data_sets.dsets import resize_or_pad, z_normalize
 from models.torchmodels import AlexNet3D
 from models.regressor import get_regressor_model
 
@@ -113,7 +114,7 @@ def predict(row, data_folder):
     run = row["run_id"]
     suffix = row["suffix"]
     scan_path = (
-        f"{data_folder}/sub-{subject}_ses-{session}_run-{run}_{suffix}.nii.gz"
+        f"{data_folder}/{subject}_{session}_run-{run}_{suffix}.nii.gz"
     )
     scan_image_tensor = get_image_tensor(scan_path)
     value = scan_image_tensor.unsqueeze(0)
@@ -121,53 +122,33 @@ def predict(row, data_folder):
     return value
 
 
-def z_normalize(image, mask=None):
-    """Apply z-normalization (standardization) to image data.
-
-    Args:
-        image (np.ndarray): Input image array
-        mask (np.ndarray, optional): Binary mask for selective normalization
-
-    Returns:
-        np.ndarray: Z-normalized image with mean=0, std=1
-    """
-    if mask is not None:
-        masked_data = image[mask > 0]
-        mean = np.mean(masked_data)
-        std = np.std(masked_data)
-    else:
-        mean = np.mean(image)
-        std = np.std(image)
-
-    if std == 0:
-        return image - mean
-    return (image - mean) / std
-
-
-def get_image_tensor(mprage_path):
+def get_image_tensor(mri_path):
     """Load and preprocess a NIfTI MRI scan for model input.
 
     Args:
-        mprage_path (str): Path to NIfTI file (.nii.gz format)
+        mri_path (str): Path to NIfTI file (.nii.gz format)
 
     Returns:
         torch.Tensor: Preprocessed 4D tensor (1, C, H, W, D) with z-normalization applied
     """
     # Load NIfTI file using nibabel
-    nii_img = nib.load(mprage_path)
+    nii_img = nib.load(mri_path)
     image_data = nii_img.get_fdata()
 
     # Convert to float32 and ensure it's a numpy array
     image_data = np.array(image_data, dtype=np.float32)
+    
+    # Resize or pad to target shape
+    image_data = resize_or_pad(image_data, target_shape=(260, 320, 320))
 
     # Z-normalization (equivalent to tio.ZNormalization with mean masking)
     image_data = z_normalize(image_data)
 
     # Convert to torch tensor and add channel dimension
-    mprage_image_tensor = torch.from_numpy(image_data).unsqueeze(0)  # Add channel dim
+    mri_image_tensor = torch.from_numpy(image_data).unsqueeze(0)  # Add channel dim
 
     # Move to CPU (though it's already on CPU)
-    input_g = mprage_image_tensor.to("cpu", non_blocking=True)
+    input_g = mri_image_tensor.to("cpu", non_blocking=True)
 
     return input_g
 
