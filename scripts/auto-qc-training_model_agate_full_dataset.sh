@@ -29,7 +29,7 @@ export PYTHONPATH=/users/1/lundq163/projects/automated-qc/src:$PYTHONPATH
 --model-save-location "/users/1/lundq163/projects/automated-qc/models/model_00.pt" \
 --plot-location "/users/1/lundq163/projects/automated-qc/doc/models/model_00/model_00.png" \
 --folder "/scratch.global/lundq163/auto_qc_all_files/" \
---csv-input-file "/users/1/lundq163/projects/automated-qc/data/anat_qc_t1w_t2w.csv" \
+--csv-input-file "/users/1/lundq163/projects/automated-qc/data/anat_qc_t1w_t2w_renamed.csv" \
 --csv-output-file "/users/1/lundq163/projects/automated-qc/doc/models/model_00/model_00.csv" \
 --tb-run-dir "/users/1/lundq163/projects/automated-qc/src/training/runs/" \
 --split-strategy "stratified" \

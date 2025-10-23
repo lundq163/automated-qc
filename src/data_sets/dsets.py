@@ -118,7 +118,7 @@ def z_normalize(image, mask=None):
         return image - mean
     return (image - mean) / std
 
-def resize_or_pad(image, target_shape=(256, 320, 320)):
+def resize_or_pad(image, target_shape=(260, 320, 320)):
     """Resize or pad image to target shape"""
     current_shape = image.shape
     
@@ -130,16 +130,16 @@ def resize_or_pad(image, target_shape=(256, 320, 320)):
     slices_out = []
     
     for i in range(3):
-        if current_shape[i] < target_shape[i]:
-            # need to pad
-            start_idx = (target_shape[i] - current_shape[i]) // 2
-            slices_out.append(slice(start_idx, start_idx + current_shape[i]))
+        if current_shape[i] <= target_shape[i]:
+            # need to pad - take all of input, place in center of output
+            start_out = (target_shape[i] - current_shape[i]) // 2
+            slices_out.append(slice(start_out, start_out + current_shape[i]))
             slices_in.append(slice(None))
         else:
-            # need to crop
-            start_idx = (current_shape[i] - target_shape[i]) // 2
-            slices_out.append(slice(start_idx, start_idx + target_shape[i]))
-            slices_in.append(slice(None))
+            # need to crop - take center of input, fill all of output
+            start_in = (current_shape[i] - target_shape[i]) // 2
+            slices_in.append(slice(start_in, start_in + target_shape[i]))
+            slices_out.append(slice(None))
 
     padded_image[slices_out[0], slices_out[1], slices_out[2]] = image[slices_in[0], slices_in[1], slices_in[2]]
 
