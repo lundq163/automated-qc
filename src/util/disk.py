@@ -5,6 +5,7 @@ from diskcache.core import MODE_BINARY
 from io import BytesIO
 
 from util.logconf import logging
+import os
 
 log = logging.getLogger(__name__)
 # log.setLevel(logging.WARN)
@@ -79,9 +80,28 @@ class GzipDisk(Disk):
         return value
 
 
-def getCache(scope_str):
+def getCache(scope_str, base_dir=None):
+    # To customize cache location, set env AUTO_QC_CACHE_DIR to an absolute path
+    # e.g., export AUTO_QC_CACHE_DIR=/mnt/fast/cache/automated-qc
+
+    if base_dir is None:
+        base_dir = os.environ.get("AUTO_QC_CACHE_DIR")
+        if not base_dir:
+            xdg = os.environ.get("XDG_CACHE_HOME")
+            if xdg:
+                base_dir = os.path.join(xdg, "auto-qc", "cache")
+            else:
+                win = os.environ.get("LOCALAPPDATA")
+                if win:
+                    base_dir = os.path.join(win, "auto-qc", "cache")
+                else:
+                    base_dir = os.path.join("data-unversioned", "cache")
+
+    base_dir = os.path.abspath(os.path.expanduser(base_dir))
+    cache_path = os.path.join(base_dir, scope_str)
+
     return FanoutCache(
-        "data-unversioned/cache/" + scope_str,
+        cache_path,
         disk=GzipDisk,
         shards=64,
         timeout=1,

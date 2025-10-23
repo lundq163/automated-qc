@@ -23,13 +23,14 @@
 cd /users/1/lundq163/projects/automated-qc/src/training || exit
 
 export PYTHONPATH=/users/1/lundq163/projects/automated-qc/src:$PYTHONPATH
+export AUTO_QC_CACHE_DIR=/scratch.global/lundq163/auto_qc_model_00_cache/
 
 /users/1/lundq163/projects/automated-qc/.venv/bin/python \
 /users/1/lundq163/projects/automated-qc/src/training/training.py \
---model-save-location "/users/1/lundq163/projects/automated-qc/models/model_00.pt" \
+--model-save-location "/scratch.global/lundq163/auto_qc_model_00/model_00.pt" \
 --plot-location "/users/1/lundq163/projects/automated-qc/doc/models/model_00/model_00.png" \
---folder "/scratch.global/lundq163/auto_qc_all_files/" \
---csv-input-file "/users/1/lundq163/projects/automated-qc/data/anat_qc_t1w_t2w_renamed.csv" \
+--folder "/scratch.global/lundq163/auto_qc_subset_256/" \
+--csv-input-file "/users/1/lundq163/projects/automated-qc/data/anat_qc_t1w_t2w_subset_256.csv" \
 --csv-output-file "/users/1/lundq163/projects/automated-qc/doc/models/model_00/model_00.csv" \
 --tb-run-dir "/users/1/lundq163/projects/automated-qc/src/training/runs/" \
 --split-strategy "stratified" \

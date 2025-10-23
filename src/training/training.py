@@ -75,6 +75,12 @@ class Config:
         self.parser.add_argument(
             "--epochs", default=1, type=int, help="Number of epochs to train"
         )
+        # self.parser.add_argument(
+        #     "--subset-power",
+        #     default=None,
+        #     type=int,
+        #     help="Load only a subset of the dataset as a power of 2 (e.g., 3 for 2^3=8 samples). If None, use full dataset."
+        # )
         self.parser.add_argument(
             "--model-save-location",
             default=f"./model-{datetime.datetime.now().strftime('%Y-%m-%d_%H.%M.%S')}.pt",
@@ -131,6 +137,8 @@ class Config:
 
     def parse_args(self, sys_argv: list[str]) -> argparse.Namespace:
         return self.parser.parse_args(sys_argv)
+    
+
 
 
 # Data Handler Class to manage dataset operations

@@ -234,7 +234,7 @@ class AutoQcDataset(Dataset):
         output_df,
         is_val_set_bool=None,
         subject=None,
-        sortby_str="random",
+        sortby_str="random"
     ):
         self.is_val_set_bool = is_val_set_bool
         self.candidateInfo_list = copy.copy(
@@ -249,7 +249,7 @@ class AutoQcDataset(Dataset):
         if sortby_str == "random":
             random.shuffle(self.candidateInfo_list)
         elif sortby_str == "QU_motion":
-            self.candidateInfo_list.sort(key=lambda x: x.QU_motion)
+            self.candidateInfo_list.sort(key=lambda x: x.qu_motion_float)
         else:
             raise Exception("Unknown sort: " + repr(sortby_str))
 
