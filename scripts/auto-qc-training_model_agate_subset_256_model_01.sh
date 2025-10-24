@@ -24,6 +24,7 @@ cd /users/1/lundq163/projects/automated-qc/src/training || exit
 
 export PYTHONPATH=/users/1/lundq163/projects/automated-qc/src:$PYTHONPATH
 export AUTO_QC_CACHE_DIR=/scratch.global/lundq163/auto_qc_model_00_cache/
+export PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True
 
 /users/1/lundq163/projects/automated-qc/.venv/bin/python \
 /users/1/lundq163/projects/automated-qc/src/training/training.py \
@@ -38,7 +39,7 @@ export AUTO_QC_CACHE_DIR=/scratch.global/lundq163/auto_qc_model_00_cache/
 --model "Regressor" \
 --lr 0.001 \
 --scheduler "plateau" \
---batch-size 32 \
+--batch-size 8 \
 --epochs 100 \
 --optimizer "Adam" \
 --num-workers 12
